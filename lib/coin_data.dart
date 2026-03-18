@@ -31,46 +31,29 @@ const List<String> cryptoList = [
   'LTC',
 ];
 
-// class CoinData {
-//   //TODO: Create your getCoinData() method here.
-//   Future<dynamic> getCoinData()async{
-//     var url = Uri.parse(
-//         'https://api-realtime.exrates.coinapi.io/v1/exchangerate/BTC/USD'
-//     );
-//     var response = await http.get(
-//       url,
-//       headers: {
-//         'Authorization': '0c15be9a-2cfa-4b6e-8b54-f6cff947e85f',
-//       },
-//     );
-//     if (response.statusCode == 200) {
-//       var jsonResponse =
-//       convert.jsonDecode(response.body) as Map<String, dynamic>;
-//       var rate = jsonResponse['rate'];
-//       print(rate);
-//       return rate;
-//     } else {
-//       print('Request failed with status: ${response.statusCode}.');
-//       return null;
-//     }
-//   }
-// }
+const coinAPIURL = 'https://api.coingecko.com/api/v3/simple/price';
+
 
 class CoinData {
+  //TODO 3: Update getCoinData to take the selectedCurrency as an input.
+  CoinData(this.selectedCurrency);
+  String selectedCurrency;
   Future<dynamic> getCoinData() async {
+    //TODO 4: Update the URL to use the selectedCurrency input.
     final url = Uri.parse(
-      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd',
+      '$coinAPIURL?ids=bitcoin&vs_currencies=${selectedCurrency.toLowerCase()}',
     );
 
     final response = await http.get(url);
 
-    print('statusCode: ${response.statusCode}');
+
     print('body: ${response.body}');
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return (data['bitcoin']['usd'] as num).toDouble();
+      return (data['bitcoin'][selectedCurrency.toLowerCase()] as num).toDouble();
     } else {
-      return null;
+      print('statusCode: ${response.statusCode}');
+      throw 'problem with the get request';
     }
 
 }
